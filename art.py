@@ -20,6 +20,7 @@ def createRandomObjectId():
 
 def main():
     requestObject = apiRequest()
+    print("Kevin-test")
 
 if __name__ == "__main__":
     main()
