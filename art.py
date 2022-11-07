@@ -1,5 +1,6 @@
 import random
 import requests
+import urllib.request
 
 
 class apiRequest:
@@ -28,6 +29,14 @@ class apiRequest:
             # Checks if imagelink is empty
             if self.image_link == "":
                 return False
+            print("----------------API RESPONSE----------------\n" \
+                  "Art object and image exists with the following parameters:\n" \
+                  + "ObjectId: " + str(self.objectId) + ", Title: " + self.json_response.get('title') \
+                  + "\nImagelink: " + self.image_link \
+                  + "\nImage saved locally under 'resources' folder with the name: art-picture.jpg")
+
+            # Saves the image locally
+            urllib.request.urlretrieve(self.image_link, "./resources/art-picture.jpg")
 
             return True
         else:
