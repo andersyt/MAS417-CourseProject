@@ -3,6 +3,8 @@ import requests
 import urllib.request
 import matplotlib.pyplot as plt
 from PIL import Image
+from stl import mesh
+import numpy as np
 
 class apiRequest:
     image_request_endpoint = str
@@ -42,7 +44,7 @@ class apiRequest:
             return True
         else:
             return False
-            
+
     def showImage(self):
         image=Image.open("./resources/art-picture.jpg")
         
@@ -56,7 +58,54 @@ class apiRequest:
         #Shows image in GUI     
         plt.imshow(image)
         plt.show()
+
+    #Converts image to stl, NOT WORKING BECAUSE OF PACKAGE    
+    def convertImageToSTL(self):
+        grey_img = Image.open("./resources/art-picture.jpg").convert('L') #Reads image and converts to grey image
         
+        max_size =(200,200) #Sets maximum size to fit ultimaker
+        max_height=30
+        
+        grey_img.thumbnail(max_size) 
+        imageNp = np.array(grey_img)
+        maxPix=imageNp.max()
+
+        (W,H)=grey_img.size
+
+        vertices=[]
+        faces=[]
+
+        for Y in range(0, H, 1):
+            for X in range(0,W,1):
+                pixelIntensity = imageNp[Y][X]
+                Z = (pixelIntensity * max_height) / maxPix
+                vertices.append((X,Y,Z))
+                
+        for X in range(0, W-1, 1):
+            for Y in range(0, H-1, 1):
+                face_v1= X+Y*W
+                face_v2=X + 1 + Y* W
+                face_v3=X + 1 + (Y+1) * W
+                
+                faces.append((face_v1,face_v2,face_v3))
+                
+                face_v1= X+Y*W
+                face_v2=X  + (Y+1)* W
+                face_v3=X + 1 + (Y+1) * W
+                
+                faces.append((face_v1,face_v2,face_v3))
+
+        facess_arr = np.array(faces)
+        vertices_arr = np.array(vertices)
+
+        image_mesh = mesh.Mesh(np.zeros(facess_arr.shape[0], dtype=mesh.Mesh.dtype))
+        for i, f in enumerate(facess_arr):
+            for j in range(3):
+                image_mesh.vectors[i][j] = vertices_arr[f[j],:]
+
+        image_mesh.save('./resources/art-picture.stl')
+        print("----------------STL CREATION-----------------\nSTL file created under 'resources' folder with the name: art-picture.stl")
+
 # Returns a random integer between 1 and 5000
 def createRandomObjectId():
     random_objectId = str(random.randint(1, 5000))
