@@ -1,10 +1,15 @@
+#HTTP and random generation
 import random
 import requests
+
+#Converting
+from stl import mesh
+import numpy as np
+
+#Saving, showing and resizing of image
 import urllib.request
 import matplotlib.pyplot as plt
 from PIL import Image
-from stl import mesh
-import numpy as np
 
 class apiRequest:
     image_request_endpoint = str
@@ -59,7 +64,7 @@ class apiRequest:
         plt.imshow(image)
         plt.show()
 
-    #Converts image to stl, NOT WORKING BECAUSE OF PACKAGE    
+    #Converts image to stl using pixelintensity from grayscale image   
     def convertImageToSTL(self):
         grey_img = Image.open("./resources/art-picture.jpg").convert('L') #Reads image and converts to grey image
         
@@ -111,10 +116,19 @@ def createRandomObjectId():
     random_objectId = str(random.randint(1, 5000))
     return random_objectId
 
-
 def main():
+    #Sends a request to get an image
     requestObject = apiRequest()
-
+    
+    #Creates a new request if the request was not successful
+    while getattr(requestObject, "request_status") is not True:
+        requestObject = apiRequest()
+    
+    #Shows image
+    requestObject.showImage()
+    
+    #Converts image to STL
+    requestObject.convertImageToSTL()
 
 if __name__ == "__main__":
     main()
