@@ -1,7 +1,8 @@
 import random
 import requests
 import urllib.request
-
+import matplotlib.pyplot as plt
+from PIL import Image
 
 class apiRequest:
     image_request_endpoint = str
@@ -41,10 +42,22 @@ class apiRequest:
             return True
         else:
             return False
+            
+    def showImage(self):
+        image=Image.open("./resources/art-picture.jpg")
+        
+        #Get image properties (width and height)
+        org_image_width, org_image_height = image.size
 
-        # Returns a random integer between 1 and 5000
-
-
+        #Checks if image is bigger than 500x500, resizes with thumbnail function and keeps aspect ratio
+        if org_image_height > 500 or org_image_width > 500:
+            image.thumbnail((500,500), Image.Resampling.LANCZOS)
+        
+        #Shows image in GUI     
+        plt.imshow(image)
+        plt.show()
+        
+# Returns a random integer between 1 and 5000
 def createRandomObjectId():
     random_objectId = str(random.randint(1, 5000))
     return random_objectId
@@ -52,7 +65,6 @@ def createRandomObjectId():
 
 def main():
     requestObject = apiRequest()
-    print("Kevin-test")
 
 
 if __name__ == "__main__":
